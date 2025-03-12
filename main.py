@@ -12,21 +12,8 @@ def reply(chat_id, text):
     time = parse(text)
     start_message_id = bot.send_message(chat_id, "Таймер запущен...")
     bot.create_countdown(time, notify_progress, author_id=chat_id,
-                         message_id=start_message_id, var_rp=var_rp,
-                         total=time)
+                         message_id=start_message_id, total=time)
     bot.create_timer(time, notify, author_id=chat_id)
-
-
-def notify_progress(time, author_id, message_id, var_rp, total):
-    progresbar = var_rp(total, time)
-    print(progresbar)
-    message_sec = "Осталось {t} секунд \n{p}".format(t=time, p=progresbar)
-    bot.update_message(author_id, message_id, message_sec)
-
-
-def notify(author_id):
-    massage = "С Уважением - Время вышло"
-    bot.send_message(author_id, massage)
 
 
 def render_progressbar(total, iteration, prefix='', suffix='',
@@ -39,8 +26,18 @@ def render_progressbar(total, iteration, prefix='', suffix='',
     return '{0} |{1}| {2}% {3}'.format(prefix, pbar, percent, suffix)
 
 
+def notify_progress(time, author_id, message_id, total):
+    progresbar = render_progressbar(total, time)
+    message_sec = "Осталось {t} секунд \n{p}".format(t=time, p=progresbar)
+    bot.update_message(author_id, message_id, message_sec)
+
+
+def notify(author_id):
+    massage = "С Уважением - Время вышло"
+    bot.send_message(author_id, massage)
+
+
 if __name__ == '__main__':
-    var_rp = render_progressbar
     bot = ptbot.Bot(TG_TOKEN)
     bot.reply_on_message(reply)
     bot.run_bot()
