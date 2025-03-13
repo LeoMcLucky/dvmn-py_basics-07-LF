@@ -2,10 +2,6 @@ import ptbot
 import os
 from dotenv import load_dotenv
 from pytimeparse import parse
-load_dotenv()
-
-
-TG_TOKEN = os.getenv('TELEGRAM_TOKEN')
 
 
 def reply(chat_id, text, bot):
@@ -38,7 +34,9 @@ def notify(author_id, bot):
 
 
 def main():
-    bot = ptbot.Bot(TG_TOKEN)
+    load_dotenv()
+    tg_token = os.getenv('TELEGRAM_TOKEN')
+    bot = ptbot.Bot(tg_token)
     bot.reply_on_message(reply, bot=bot)
     bot.run_bot()
 
