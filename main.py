@@ -2,18 +2,18 @@ import ptbot
 import os
 from dotenv import load_dotenv
 from pytimeparse import parse
-
 load_dotenv()
+
 
 TG_TOKEN = os.getenv('TELEGRAM_TOKEN')
 
 
-def reply(chat_id, text):
+def reply(chat_id, text, bot):
     time = parse(text)
     start_message_id = bot.send_message(chat_id, "Таймер запущен...")
     bot.create_countdown(time, notify_progress, author_id=chat_id,
-                         message_id=start_message_id, total=time)
-    bot.create_timer(time, notify, author_id=chat_id)
+                         message_id=start_message_id, total=time, bot=bot)
+    bot.create_timer(time, notify, author_id=chat_id, bot=bot)
 
 
 def render_progressbar(total, iteration, prefix='', suffix='',
@@ -26,18 +26,22 @@ def render_progressbar(total, iteration, prefix='', suffix='',
     return '{0} |{1}| {2}% {3}'.format(prefix, pbar, percent, suffix)
 
 
-def notify_progress(time, author_id, message_id, total):
+def notify_progress(time, author_id, message_id, total, bot):
     progresbar = render_progressbar(total, time)
     message_sec = "Осталось {t} секунд \n{p}".format(t=time, p=progresbar)
     bot.update_message(author_id, message_id, message_sec)
 
 
-def notify(author_id):
+def notify(author_id, bot):
     massage = "С Уважением - Время вышло"
     bot.send_message(author_id, massage)
 
 
-if __name__ == '__main__':
+def main():
     bot = ptbot.Bot(TG_TOKEN)
-    bot.reply_on_message(reply)
+    bot.reply_on_message(reply, bot=bot)
     bot.run_bot()
+
+
+if __name__ == '__main__':
+    main()
